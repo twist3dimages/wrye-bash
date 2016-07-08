@@ -73,6 +73,7 @@ def get_game_path(submod):
     return get_registry_path(subkey, entry, submod.exe)
 
 try: # Python27\Lib\site-packages\win32comext\shell
+    raise ImportError
     from win32com.shell import shell, shellcon
     from win32com.shell.shellcon import FO_DELETE, FO_MOVE, FO_COPY, \
         FO_RENAME, FOF_NOCONFIRMMKDIR
