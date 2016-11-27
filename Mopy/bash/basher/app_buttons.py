@@ -400,7 +400,7 @@ class App_Tes4View(App_Button):
 #------------------------------------------------------------------------------
 class _Mods_BOSSDisableLockTimes(BoolLink):
     """Toggle Lock Load Order disabling when launching BOSS through Bash."""
-    text = _(u'BOSS Disable Lock Load Order')
+    _text = _(u'BOSS Disable Lock Load Order')
     key = 'BOSS.ClearLockTimes'
     help = _(u"If selected, will temporarily disable Bash's Lock Load Order"
              u" when running BOSS through Bash.")
@@ -408,8 +408,8 @@ class _Mods_BOSSDisableLockTimes(BoolLink):
 #------------------------------------------------------------------------------
 class _Mods_BOSSLaunchGUI(BoolLink):
     """If BOSS.exe is available then BOSS GUI.exe should be too."""
-    text, key, help = _(u'Launch using GUI'), 'BOSS.UseGUI', \
-                      _(u"If selected, Bash will run BOSS's GUI.")
+    _text, key, help = _(u'Launch using GUI'), 'BOSS.UseGUI', \
+                       _(u"If selected, Bash will run BOSS's GUI.")
 
 class App_BOSS(App_Button):
     """loads BOSS"""

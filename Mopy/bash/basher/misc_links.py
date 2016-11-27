@@ -40,7 +40,7 @@ __all__ = ['ColumnsMenu', 'Master_ChangeTo', 'Master_Disable',
 #------------------------------------------------------------------------------
 class Screens_NextScreenShot(EnabledLink):
     """Sets screenshot base name and number."""
-    text = _(u'Next Shot...')
+    _text = _(u'Next Shot...')
     rePattern = re.compile(ur'^(.+?)(\d*)$',re.I|re.U)
 
     def _enable(self): return bosh.oblivionIni.abs_path.exists()
@@ -156,7 +156,7 @@ class Screen_Rename(UIList_Rename):
 class People_AddNew(ItemLink, People_Link):
     """Add a new record."""
     dialogTitle = _(u'Add New Person')
-    text = _(u'Add...')
+    _text = _(u'Add...')
     help = _(u'Add a new record')
 
     def Execute(self):
@@ -173,7 +173,7 @@ class People_AddNew(ItemLink, People_Link):
 class People_Export(ItemLink, People_Link):
     """Export people to text archive."""
     dialogTitle = _(u"Export People")
-    text = _(u'Export...')
+    _text = _(u'Export...')
     help = _(u'Export people to text archive')
 
     def Execute(self):
@@ -192,7 +192,7 @@ class People_Export(ItemLink, People_Link):
 class People_Import(ItemLink, People_Link):
     """Import people from text archive."""
     dialogTitle = _(u"Import People")
-    text = _(u'Import...')
+    _text = _(u'Import...')
     help = _(u'Import people from text archive')
 
     def Execute(self):
@@ -211,12 +211,12 @@ class People_Import(ItemLink, People_Link):
 #------------------------------------------------------------------------------
 class People_Karma(ChoiceLink, balt.MenuLink, People_Link):
     """Add Karma setting links."""
-    text = _(u'Karma')
+    _text = _(u'Karma')
     karma_labels = [u'%+d' % x for x in xrange(5, -6, -1)]
 
     class _Karma(ItemLink, People_Link):
         def Execute(self):
-            karma = int(self.text)
+            karma = int(self._text)
             for item in self.selected:
                 text = self.pdata[item][2]
                 self.pdata[item] = (time.time(), karma, text)
@@ -231,14 +231,14 @@ class People_Karma(ChoiceLink, balt.MenuLink, People_Link):
 # Masters Links ---------------------------------------------------------------
 #------------------------------------------------------------------------------
 class Master_AllowEdit(CheckLink, EnabledLink):
-    text, help = _(u'Allow edit'), _(u'Allow editing the masters list')
+    _text, help = _(u'Allow edit'), _(u'Allow editing the masters list')
 
     def _enable(self): return self.window.panel.detailsPanel.allowDetailsEdit
     def _check(self): return self.window.allowEdit
     def Execute(self): self.window.allowEdit ^= True
 
 class Master_ClearRenames(ItemLink):
-    text = _(u'Clear Renames')
+    _text = _(u'Clear Renames')
     help = _(u'Clear internal Bash renames dictionary')
 
     def Execute(self):
@@ -257,7 +257,7 @@ class _Master_EditList(OneItemLink): # one item cause _singleSelect = True
 
 class Master_ChangeTo(_Master_EditList):
     """Rename/replace master through file dialog."""
-    text = _(u"Change to...")
+    _text = _(u"Change to...")
     help = _(u"Rename/replace master through file dialog")
 
     @balt.conversation
@@ -288,7 +288,7 @@ class Master_ChangeTo(_Master_EditList):
 #------------------------------------------------------------------------------
 class Master_Disable(AppendableLink, _Master_EditList):
     """Rename/replace master through file dialog."""
-    text = _(u"Disable")
+    _text = _(u"Disable")
     help = _(u"Disable master")
 
     def _append(self, window): return not window.fileInfo.isMod() #--Saves only
@@ -330,7 +330,7 @@ class _Column(CheckLink, EnabledLink):
 
 class ColumnsMenu(ChoiceLink, MenuLink):
     """Customize visible columns."""
-    text = _(u"Columns")
+    _text = _(u"Columns")
     # extraItems
     class _AutoWidth(RadioLink):
         wxFlag = 0

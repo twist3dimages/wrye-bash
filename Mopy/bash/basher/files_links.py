@@ -50,7 +50,7 @@ class Files_SortBy(RadioLink):
 
 class Files_Unhide(ItemLink):
     """Unhide file(s). (Move files back to Data Files or Save directory.)"""
-    text = _(u"Unhide...")
+    _text = _(u"Unhide...")
 
     def __init__(self, files_type):
         super(Files_Unhide, self).__init__()
@@ -161,7 +161,7 @@ class File_Duplicate(ItemLink):
 
 class File_ListMasters(OneItemLink):
     """Copies list of masters to clipboard."""
-    text = _(u"List Masters...")
+    _text = _(u"List Masters...")
 
     def _initData(self, window, selection):
         super(File_ListMasters, self)._initData(window, selection)
@@ -218,7 +218,7 @@ class File_Snapshot(ItemLink):
 
 class File_RevertToSnapshot(OneItemLink): # MODS LINK !
     """Revert to Snapshot."""
-    text = _(u'Revert to Snapshot...')
+    _text = _(u'Revert to Snapshot...')
     help = _(u"Revert to a previously created snapshot from the Bash/Snapshots dir.")
 
     @balt.conversation
@@ -254,7 +254,7 @@ class File_RevertToSnapshot(OneItemLink): # MODS LINK !
 
 class File_Backup(ItemLink):
     """Backup file."""
-    text = _(u'Backup')
+    _text = _(u'Backup')
     help = _(u"Create a backup of the selected file(s).")
 
     def Execute(self):
@@ -263,7 +263,7 @@ class File_Backup(ItemLink):
             fileInfo.makeBackup(True)
 
 class _RevertBackup(OneItemLink):
-    text = _(u'Revert to Backup')
+    _text = _(u'Revert to Backup')
 
     def _initData(self, window, selection):
         super(_RevertBackup, self)._initData(window, selection)
@@ -292,7 +292,7 @@ class _RevertBackup(OneItemLink):
                 self.window.RefreshUI(refreshSaves=True)
 
 class _RevertFirstBackup(_RevertBackup):
-    text = _(u'Revert to First Backup')
+    _text = _(u'Revert to First Backup')
 
     def _initData(self, window, selection):
         super(_RevertFirstBackup, self)._initData(window, selection)

@@ -50,7 +50,7 @@ def _bassLang(): return bass.language if bass.language else \
 #------------------------------------------------------------------------------
 class Settings_BackupSettings(ItemLink):
     """Saves Bash's settings and user data.."""
-    text =_(u'Backup Settings...')
+    _text =_(u'Backup Settings...')
     help = _(u"Backup all of Wrye Bash's settings/data to an archive file.")
 
     @balt.conversation
@@ -90,7 +90,7 @@ class Settings_BackupSettings(ItemLink):
 #------------------------------------------------------------------------------
 class Settings_RestoreSettings(ItemLink):
     """Saves Bash's settings and user data.."""
-    text = _(u'Restore Settings...')
+    _text = _(u'Restore Settings...')
     help = _(u"Restore all of Wrye Bash's settings/data from a backup archive "
              u"file.")
 
@@ -115,7 +115,7 @@ class Settings_RestoreSettings(ItemLink):
 #------------------------------------------------------------------------------
 class Settings_SaveSettings(ItemLink):
     """Saves Bash's settings and user data."""
-    text = _(u'Save Settings')
+    _text = _(u'Save Settings')
     help = _(u"Save all of Wrye Bash's settings/data now.")
 
     def Execute(self):
@@ -124,7 +124,7 @@ class Settings_SaveSettings(ItemLink):
 #------------------------------------------------------------------------------
 class Settings_ExportDllInfo(AppendableLink, ItemLink):
     """Exports list of good and bad dll's."""
-    text = _(
+    _text = _(
         u"Export list of allowed/disallowed %s plugin dlls") % bush.game.se_sd
     help = _(u"Export list of allowed/disallowed plugin dlls to a txt file"
         u" (for BAIN).")
@@ -160,7 +160,7 @@ class Settings_ExportDllInfo(AppendableLink, ItemLink):
 #------------------------------------------------------------------------------
 class Settings_ImportDllInfo(AppendableLink, ItemLink):
     """Imports list of good and bad dll's."""
-    text = _(
+    _text = _(
         u"Import list of allowed/disallowed %s plugin dlls") % bush.game.se_sd
     help = _(u"Import list of allowed/disallowed plugin dlls from a txt file"
         u" (for BAIN).")
@@ -220,7 +220,7 @@ class Settings_ImportDllInfo(AppendableLink, ItemLink):
 #------------------------------------------------------------------------------
 class Settings_Colors(ItemLink):
     """Shows the color configuration dialog."""
-    text = _(u'Colors...')
+    _text = _(u'Colors...')
     help = _(u"Configure the custom colors used in the UI.")
 
     def Execute(self): ColorDialog.Display()
@@ -244,7 +244,7 @@ class Settings_IconSize(RadioLink):
 #------------------------------------------------------------------------------
 class Settings_StatusBar_ShowVersions(CheckLink):
     """Show/Hide version numbers for buttons on the statusbar."""
-    text = _(u'Show App Version')
+    _text = _(u'Show App Version')
     help = _(u"Show/hide version numbers for buttons on the status bar.")
 
     def _check(self): return bass.settings['bash.statusbar.showversion']
@@ -276,7 +276,7 @@ class Settings_Languages(TransLink):
             return subMenu
         else:
             class _NoLang(EnabledLink):
-                text = _(u'Language')
+                _text = _(u'Language')
                 help = _(u"Wrye Bash was unable to detect any translation"
                          u" files.")
                 def _enable(self): return False
@@ -396,7 +396,7 @@ class Settings_UnHideButtons(TransLink):
             return subMenu
         else:
             class _NoButtons(EnabledLink):
-                text = _(u'Unhide Buttons')
+                _text = _(u'Unhide Buttons')
                 help = _(u"No hidden buttons available to unhide.")
                 def _enable(self): return False
             return _NoButtons()
@@ -426,7 +426,7 @@ class Settings_UnHideButton(ItemLink):
 
 #------------------------------------------------------------------------------
 class Settings_UseAltName(BoolLink):
-    text, key, help = _(u'Use Alternate Wrye Bash Name'), 'bash.useAltName', \
+    _text, key, help = _(u'Use Alternate Wrye Bash Name'), 'bash.useAltName', \
         _(u'Use an alternate display name for Wrye Bash based on the game it'
           u' is managing.')
 
@@ -436,7 +436,7 @@ class Settings_UseAltName(BoolLink):
 
 #------------------------------------------------------------------------------
 class Settings_UAC(AppendableLink, ItemLink):
-    text = _(u'Administrator Mode')
+    _text = _(u'Administrator Mode')
     help = _(u'Restart Wrye Bash with administrator privileges.')
 
     def _append(self, window): return env.isUAC
@@ -449,7 +449,7 @@ class Settings_UAC(AppendableLink, ItemLink):
 
 class Settings_Deprint(CheckLink):
     """Turn on deprint/delist."""
-    text = _(u'Debug Mode')
+    _text = _(u'Debug Mode')
     help = _(u"Turns on extra debug prints to help debug an error or just for "
              u"advanced testing.")
 
@@ -462,7 +462,7 @@ class Settings_Deprint(CheckLink):
 
 class Settings_DumpTranslator(AppendableLink, ItemLink):
     """Dumps new translation key file using existing key, value pairs."""
-    text = _(u'Dump Translator')
+    _text = _(u'Dump Translator')
     help = _(u"Generate a new version of the translator file for your locale.")
 
     def _append(self, window):
