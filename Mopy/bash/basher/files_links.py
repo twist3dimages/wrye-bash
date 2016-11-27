@@ -41,8 +41,8 @@ class Files_SortBy(RadioLink):
     def __init__(self, sortCol):
         super(Files_SortBy, self).__init__()
         self.sortCol = sortCol
-        self.text = bass.settings['bash.colNames'][sortCol]
-        self.help = _(u'Sort by %s') % self.text
+        self._text = bass.settings['bash.colNames'][sortCol]
+        self.help = _(u'Sort by %s') % self._text
 
     def _check(self): return self.window.sort_column == self.sortCol
 
@@ -97,7 +97,7 @@ class File_Duplicate(ItemLink):
 
     def _initData(self, window, selection):
         super(File_Duplicate, self)._initData(window, selection)
-        self.text = (_(u'Duplicate'),_(u'Duplicate...'))[len(selection) == 1]
+        self._text = (_(u'Duplicate'), _(u'Duplicate...'))[len(selection) == 1]
         self.help = _(u"Make a copy of '%s'") % (selection[0])
 
     _bsaAndVoice = _(u"This mod has an associated archive (%s." +
@@ -181,7 +181,7 @@ class File_Snapshot(ItemLink):
 
     def _initData(self, window, selection):
         super(File_Snapshot, self)._initData(window, selection)
-        self.text = (_(u'Snapshot'),_(u'Snapshot...'))[len(selection) == 1]
+        self._text = (_(u'Snapshot'),_(u'Snapshot...'))[len(selection) == 1]
 
     def Execute(self):
         for item in self.selected:

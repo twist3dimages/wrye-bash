@@ -88,7 +88,7 @@ class Screen_ConvertTo(EnabledLink):
         super(Screen_ConvertTo, self).__init__()
         self.ext = ext.lower()
         self.imageType = imageType
-        self.text = _(u'Convert to %s') % self.ext
+        self._text = _(u'Convert to %s') % self.ext
 
     def _enable(self):
         self.convertable = [s for s in self.selected if
@@ -121,7 +121,7 @@ class Screen_JpgQuality(RadioLink):
     def __init__(self, quality):
         super(Screen_JpgQuality, self).__init__()
         self.quality = quality
-        self.text = u'%i' % self.quality
+        self._text = u'%i' % self.quality
 
     def _check(self):
         return self.quality == bass.settings['bash.screens.jpgQuality']
@@ -135,7 +135,7 @@ class Screen_JpgQualityCustom(Screen_JpgQuality):
     def __init__(self):
         super(Screen_JpgQualityCustom, self).__init__(
             bass.settings['bash.screens.jpgCustomQuality'])
-        self.text = _(u'Custom [%i]') % self.quality
+        self._text = _(u'Custom [%i]') % self.quality
 
     def Execute(self):
         quality = self._askNumber(_(u'JPEG Quality'), value=self.quality,
@@ -143,7 +143,7 @@ class Screen_JpgQualityCustom(Screen_JpgQuality):
         if quality is None: return
         self.quality = quality
         bass.settings['bash.screens.jpgCustomQuality'] = self.quality
-        self.text = _(u'Custom [%i]') % quality
+        self._text = _(u'Custom [%i]') % quality
         super(Screen_JpgQualityCustom, self).Execute()
 
 #------------------------------------------------------------------------------
@@ -307,9 +307,9 @@ class _Column(CheckLink, EnabledLink):
     def __init__(self, _text='COLKEY'): # not really the link text in this case
         super(_Column, self).__init__()
         self.colName = _text
-        self.text = bass.settings['bash.colNames'][self.colName]
+        self._text = bass.settings['bash.colNames'][self.colName]
         self.help = _(u"Show/Hide '%(colname)s' column.") % {
-            'colname': self.text}
+            'colname': self._text}
 
     def _enable(self):
         return self.colName not in self.window.persistent_columns
@@ -339,15 +339,15 @@ class ColumnsMenu(ChoiceLink, MenuLink):
             self.window.autoColWidths = self.wxFlag
             self.window.autosizeColumns()
     class _Manual(_AutoWidth):
-        text = _(u'Manual')
+        _text = _(u'Manual')
         help = _(
             u'Allow to manually resize columns. Applies to all Bash lists')
     class _Contents(_AutoWidth):
-        text, wxFlag = _(u'Fit Contents'), 1 # wx.LIST_AUTOSIZE
+        _text, wxFlag = _(u'Fit Contents'), 1 # wx.LIST_AUTOSIZE
         help = _(u'Fit columns to their content. Applies to all Bash lists.'
                  u' You can hit Ctrl + Numpad+ to the same effect')
     class _Header(_AutoWidth):
-        text, wxFlag = _(u'Fit Header'), 2 # wx.LIST_AUTOSIZE_USEHEADER
+        _text, wxFlag = _(u'Fit Header'), 2 # wx.LIST_AUTOSIZE_USEHEADER
         help = _(u'Fit columns to their content, keep header always visible. '
                  u' Applies to all Bash lists')
     extraItems = [_Manual(), _Contents(), _Header(), balt.SeparatorLink()]

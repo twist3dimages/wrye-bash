@@ -183,7 +183,7 @@ class Saves_Profiles(ChoiceLink):
     choiceLinkType = _ProfileLink
 
     class _Default(_ProfileLink):
-        text = _(u'Default')
+        _text = _(u'Default')
         @property
         def help(self):
             return _(u'Set profile to the default (My Games/Saves)')
@@ -494,7 +494,7 @@ class Save_EditCreated(OneItemLink):
             raise ArgumentError
         super(Save_EditCreated, self).__init__()
         self.type = type
-        self.menuName = self.text = Save_EditCreated.menuNames[self.type]
+        self.menuName = self._text = Save_EditCreated.menuNames[self.type]
 
     def Execute(self):
         #--Get SaveFile

@@ -230,7 +230,7 @@ class Settings_IconSize(RadioLink):
     def __init__(self, sb_icon_size):
         super(Settings_IconSize, self).__init__()
         self.sb_icon_size = sb_icon_size
-        self.text = unicode(sb_icon_size)
+        self._text = unicode(sb_icon_size)
         self.help = _(u"Sets the status bar icons to %(sb_icon_size)s pixels") % (
             {'sb_icon_size': unicode(sb_icon_size)})
 
@@ -298,19 +298,19 @@ class Settings_Language(RadioLink):
     def __init__(self,language):
         super(Settings_Language, self).__init__()
         self.language = language
-        self.text = self.__class__.languageMap.get(self.language.lower(),
+        self._text = self.__class__.languageMap.get(self.language.lower(),
                                                     self.language)
 
     def _initData(self, window, selection):
         if self.language == _bassLang():
             self.help = _(
                 "Currently using %(languagename)s as the active language.") % (
-                            {'languagename': self.text})
+                            {'languagename': self._text})
             self.check = True
         else:
             self.help = _(
                 "Restart Wrye Bash and use %(languagename)s as the active "
-                "language.") % ({'languagename': self.text})
+                "language.") % ({'languagename': self._text})
             self.check = False
 
     def _check(self): return self.check
@@ -345,10 +345,10 @@ class Settings_PluginEncodings(MenuLink):
 class Settings_PluginEncoding(RadioLink):
     def __init__(self,name,encoding):
         super(Settings_PluginEncoding, self).__init__()
-        self.text = name
+        self._text = name
         self.encoding = encoding
         self.help = _(u"Select %(encodingname)s encoding for Wrye Bash to use."
-            ) % ({'encodingname': self.text})
+            ) % ({'encodingname': self._text})
 
     def _check(self): return self.encoding == bass.settings[
         'bash.pluginEncoding']
@@ -369,7 +369,7 @@ class Settings_Games(MenuLink):
 class _Settings_Game(RadioLink):
     def __init__(self,game):
         super(_Settings_Game, self).__init__()
-        self.game = self.text = game
+        self.game = self._text = game
         self.help = _(u"Restart Wrye Bash to manage %(game)s.") % (
             {'game': game})
 
@@ -419,7 +419,7 @@ class Settings_UnHideButton(ItemLink):
         if tip is None:
             # No good, use its uid as a last resort
             tip = self.link.uid
-        self.text = tip
+        self._text = tip
         self.help = _(u"Unhide the '%s' status bar button.") % tip
 
     def Execute(self): Link.Frame.statusBar.UnhideButton(self.link)

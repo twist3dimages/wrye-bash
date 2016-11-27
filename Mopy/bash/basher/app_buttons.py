@@ -44,7 +44,7 @@ class _StatusBar_Hide(ItemLink):
     def _initData(self, window, selection):
         super(_StatusBar_Hide, self)._initData(window, selection)
         tip = window.GetToolTip().GetTip()
-        self.text = _(u"Hide '%s'") % tip
+        self._text = _(u"Hide '%s'") % tip
         self.help = _(u"Hides %(buttonname)s's status bar button (can be"
             u" restored through the settings menu).") % ({'buttonname': tip})
 
@@ -334,7 +334,7 @@ class _Mods_xEditExpert(BoolLink):
 
     def __init__(self):
         super(_Mods_xEditExpert, self).__init__()
-        self.text, self.key = bush.game.xEdit_expert
+        self._text, self.key = bush.game.xEdit_expert
 
 class App_Tes4View(App_Button):
     """Allow some extra args for Tes4View."""

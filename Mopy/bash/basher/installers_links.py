@@ -236,7 +236,7 @@ class Installers_Refresh(AppendableLink, Installers_Link):
     def __init__(self, full_refresh=False):
         super(Installers_Refresh, self).__init__()
         self.full_refresh = full_refresh
-        self.text = _(u'Full Refresh') if full_refresh else _(u'Refresh Data')
+        self._text = _(u'Full Refresh') if full_refresh else _(u'Refresh Data')
         self.help = _(
             u"Perform a full refresh of all data files, recalculating all "
             u"CRCs.  This can take 5-15 minutes.") if self.full_refresh else _(
@@ -247,7 +247,7 @@ class Installers_Refresh(AppendableLink, Installers_Link):
     @balt.conversation
     def Execute(self):
         """Refreshes all Installers data"""
-        if self.full_refresh and not self._askWarning(self.msg, self.text):
+        if self.full_refresh and not self._askWarning(self.msg, self._text):
             return
         self.idata.reset_refresh_flag_on_projects()
         self.iPanel.ShowPanel(fullRefresh=self.full_refresh,scan_data_dir=True)

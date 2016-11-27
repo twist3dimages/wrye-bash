@@ -96,7 +96,7 @@ class Mods_LoadList(ChoiceLink):
                 self._refresh()
                 if errorMessage: self._showError(errorMessage, self._text)
         class _All(__Activate):
-            text = _(u'Activate All')
+            _text = _(u'Activate All')
             help = _(u'Activate all mods')
             def Execute(self):
                 """Select all mods."""
@@ -110,11 +110,11 @@ class Mods_LoadList(ChoiceLink):
                     self._showError(u'%s' % e, _(u'Select All'))
                 self._refresh()
         class _None(__Activate):
-            text = _(u'De-activate All')
+            _text = _(u'De-activate All')
             help = _(u'De-activate all mods')
             def Execute(self): self._selectExact([])
         class _Selected(__Activate):
-            text = _(u'Activate Selected')
+            _text = _(u'Activate Selected')
             help = _(u'Activate only the mods selected in the list')
             def Execute(self):
                 self._selectExact(self.window.GetSelected())
@@ -186,7 +186,7 @@ class Mods_OblivionVersion(CheckLink, EnabledLink):
 
     def __init__(self, key, setProfile=False):
         super(Mods_OblivionVersion, self).__init__()
-        self.key = self.text = key
+        self.key = self._text = key
         self.setProfile = setProfile
 
     def _check(self): return bosh.modInfos.voCurrent == self.key
@@ -228,7 +228,7 @@ class Mods_CreateBlank(ItemLink):
         super(Mods_CreateBlank, self).__init__()
         self.masterless = masterless
         if masterless:
-            self.text = _(u'New Mod (masterless)...')
+            self._text = _(u'New Mod (masterless)...')
             self.help = _(u'Create a new blank mod with no masters')
 
     def Execute(self):

@@ -96,13 +96,13 @@ class INI_FileOpenOrCopy(OneItemLink):
     def _initData(self, window, selection):
         super(INI_FileOpenOrCopy, self)._initData(window, selection)
         if not len(selection) == 1:
-            self.text = _(u'Open/Copy...')
+            self._text = _(u'Open/Copy...')
             self.help = _(u'Only one INI file can be opened or copied at a time.')
         elif not bosh.iniInfos[selection[0]].is_default_tweak:
-            self.text = _(u'Open...')
+            self._text = _(u'Open...')
             self.help = _(u"Open '%s' with the system's default program.") % selection[0]
         else:
-            self.text = _(u'Copy...')
+            self._text = _(u'Copy...')
             self.help = _(u"Make an editable copy of the default tweak '%s'.") % selection[0]
 
     def Execute(self):

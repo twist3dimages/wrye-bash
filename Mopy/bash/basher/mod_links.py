@@ -753,10 +753,10 @@ class Mod_Ghost(_GhostLink, EnabledLink): ##: consider an unghost all Link
             self.mname = selection[0]
             self.fileInfo = bosh.modInfos[self.mname]
             self.isGhost = self.fileInfo.isGhost
-            self.text = _(u"Ghost") if not self.isGhost else _(u"Unghost")
+            self._text = _(u"Ghost") if not self.isGhost else _(u"Unghost")
         else:
             self.help = _(u"Ghost selected mods.  Active mods can't be ghosted")
-            self.text = _(u"Ghost")
+            self._text = _(u"Ghost")
 
     def _enable(self):
         # only enable ghosting for one item if not active
@@ -806,7 +806,7 @@ class Mod_MarkMergeable(ItemLink):
     def __init__(self,doCBash):
         Link.__init__(self)
         self.doCBash = doCBash
-        self.text = _(u'Mark Mergeable (CBash)...') if doCBash else _(
+        self._text = _(u'Mark Mergeable (CBash)...') if doCBash else _(
             u'Mark Mergeable...')
         self.help = _(u'Scans the selected plugin(s) to determine if they are '
                       u'mergeable into the %(patch_type)s bashed patch, '
@@ -815,7 +815,7 @@ class Mod_MarkMergeable(ItemLink):
 
     @balt.conversation
     def Execute(self):
-        with balt.Progress(self.text + u' ' * 30) as prog:
+        with balt.Progress(self._text + u' ' * 30) as prog:
             result, tagged_no_merge = bosh.modInfos.rescanMergeable(
                 self.selected, prog, self.doCBash)
         yes = [x for x in self.selected if
@@ -850,7 +850,7 @@ class _Mod_Patch_Update(_Mod_BP_Link):
         super(_Mod_Patch_Update, self).__init__()
         self.doCBash = doCBash
         self.CBashMismatch = False
-        self.text = _(u'Rebuild Patch (CBash *BETA*)...') if doCBash else _(
+        self._text = _(u'Rebuild Patch (CBash *BETA*)...') if doCBash else _(
             u'Rebuild Patch...')
         self.help = _(u'Rebuild the Bashed Patch (CBash)') if doCBash else _(
                     u'Rebuild the Bashed Patch')
@@ -1110,7 +1110,7 @@ class _Mod_SkipDirtyCheckAll(_DirtyLink, CheckLink):
     def __init__(self, bSkip):
         super(_Mod_SkipDirtyCheckAll, self).__init__()
         self.skip = bSkip
-        self.text = _(
+        self._text = _(
             u"Don't check against LOOT's dirty mod list") if self.skip else _(
             u"Check against LOOT's dirty mod list")
 
@@ -1162,7 +1162,7 @@ class Mod_ScanDirty(ItemLink):
         super(Mod_ScanDirty, self)._initData(window, selection)
         # settings['bash.CBashEnabled'] is set once in BashApp.Init() AFTER
         # InitLinks() is called in bash.py
-        self.text = _(u'Scan for Dirty Edits') if bass.settings[
+        self._text = _(u'Scan for Dirty Edits') if bass.settings[
             'bash.CBashEnabled'] else _(u"Scan for UDR's")
 
     def Execute(self):
@@ -1338,15 +1338,15 @@ class Mod_UndeleteRefs(EnabledLink):
 
     def Execute(self):
         if not self._askContinue(self.warn, 'bash.undeleteRefs.continue',
-                                 self.text): return
-        with balt.Progress(self.text) as progress:
+                                 self._text): return
+        with balt.Progress(self._text) as progress:
             progress.setFull(len(self.selected))
             hasFixed = False
             log = bolt.LogFile(StringIO.StringIO())
             for index,fileName in enumerate(map(GPath,self.selected)):
                 if bosh.reOblivion.match(fileName.s):
                     self._showWarning(_(u'Skipping') + u' ' + fileName.s,
-                                      self.text)
+                                      self._text)
                     continue
                 progress(index,_(u'Scanning')+u' '+fileName.s+u'.')
                 fileInfo = bosh.modInfos[fileName]
@@ -1362,7 +1362,7 @@ class Mod_UndeleteRefs(EnabledLink):
             message = log.out.getvalue()
         else:
             message = _(u"No changes required.")
-        self._showWryeLog(message, title=self.text, icons=Resources.bashBlue)
+        self._showWryeLog(message, title=self._text, icons=Resources.bashBlue)
         log.out.close()
 
 # Rest of menu Links ----------------------------------------------------------
@@ -1413,7 +1413,7 @@ class Mod_CopyToEsmp(EnabledLink):
         super(Mod_CopyToEsmp, self)._initData(window, selection)
         fileInfo = bosh.modInfos[selection[0]]
         self._is_esm = fileInfo.isEsm()
-        self.text = _(u'Copy to Esp') if self._is_esm else _(u'Copy to Esm')
+        self._text = _(u'Copy to Esp') if self._is_esm else _(u'Copy to Esm')
 
     def _enable(self):
         """Disable if selected are mixed esm/p's or inverted mods."""
@@ -1543,7 +1543,7 @@ class Mod_FlipSelf(_Esm_Flip):
         super(Mod_FlipSelf, self)._initData(window, selection)
         fileInfo = bosh.modInfos[selection[0]]
         self.isEsm = fileInfo.isEsm()
-        self.text = _(u'Espify Self') if self.isEsm else _(u'Esmify Self')
+        self._text = _(u'Espify Self') if self.isEsm else _(u'Esmify Self')
 
     def _enable(self):
         for item in self.selected:
@@ -1575,7 +1575,7 @@ class Mod_FlipMasters(OneItemLink, _Esm_Flip):
 
     def _initData(self, window, selection):
         super(Mod_FlipMasters, self)._initData(window, selection)
-        self.text = _(u'Esmify Masters')
+        self._text = _(u'Esmify Masters')
         masters = self._selected_info.header.masters
         enable = len(selection) == 1 and len(masters) > 1
         self.espMasters = [master for master in masters
@@ -1585,7 +1585,7 @@ class Mod_FlipMasters(OneItemLink, _Esm_Flip):
         for masterName in self.espMasters:
             masterInfo = bosh.modInfos.get(masterName, None)
             if masterInfo and masterInfo.isInvertedMod():
-                self.text = _(u'Espify Masters')
+                self._text = _(u'Espify Masters')
                 self.toEsm = False
                 break
         else:

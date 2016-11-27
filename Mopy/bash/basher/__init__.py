@@ -3343,11 +3343,11 @@ class _Tab_Link(AppendableLink, CheckLink, EnabledLink):
         super(_Tab_Link, self).__init__()
         self.tabKey = tabKey
         self.enabled = canDisable
-        className, self.text, item = tabInfo.get(self.tabKey,[None,None,None])
+        className, self._text, item = tabInfo.get(self.tabKey,[None,None,None])
         self.help = _(u"Show/Hide the %(tabtitle)s Tab.") % (
-            {'tabtitle': self.text})
+            {'tabtitle': self._text})
 
-    def _append(self, window): return self.text is not None
+    def _append(self, window): return self._text is not None
 
     def _enable(self): return self.enabled
 

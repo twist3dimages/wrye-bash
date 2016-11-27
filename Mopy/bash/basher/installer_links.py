@@ -184,7 +184,7 @@ class Installer_EditWizard(_SingleInstallable):
 
     def _initData(self, window, selection):
         super(Installer_EditWizard, self)._initData(window, selection)
-        self.text = _(u'View Wizard...') if self.isSingleArchive() else _(
+        self._text = _(u'View Wizard...') if self.isSingleArchive() else _(
             u'Edit Wizard...')
 
     def _enable(self):
@@ -201,7 +201,7 @@ class Installer_Wizard(OneItemLink, _InstallerLink):
     def __init__(self, bAuto):
         super(Installer_Wizard, self).__init__()
         self.bAuto = bAuto
-        self.text = _(u'Auto Wizard') if self.bAuto else _(u'Wizard')
+        self._text = _(u'Auto Wizard') if self.bAuto else _(u'Wizard')
 
     def _enable(self):
         isSingle = super(Installer_Wizard, self)._enable()
@@ -531,7 +531,7 @@ class Installer_Install(_InstallLink):
     def __init__(self,mode='DEFAULT'):
         super(Installer_Install, self).__init__()
         self.mode = mode
-        self.text = self.mode_title[self.mode]
+        self._text = self.mode_title[self.mode]
 
     @balt.conversation
     def Execute(self):
@@ -680,7 +680,7 @@ class Installer_Refresh(_InstallerLink):
         super(Installer_Refresh, self).__init__()
         self.calculate_projects_crc = calculate_projects_crc
         if not calculate_projects_crc:
-            self.text = _(u'Quick Refresh')
+            self._text = _(u'Quick Refresh')
             self.help = _(u'Rescan selected Installer(s)') + u'.  ' + _(
                 u'Ignores skip refresh flag on projects') + u'.  ' + _(
             u'Will not recalculate cached crcs of files in a project')
@@ -1028,9 +1028,9 @@ class InstallerProject_Sync(_SingleProject):
             u'Files to delete:') + u'%d\n' + _(
             u'Files to update:') + u'%d') % (
                       self._selected_item.s, len(missing), len(mismatched))
-        if not self._askWarning(message, title=self.text): return
+        if not self._askWarning(message, title=self._text): return
         #--Sync it, baby!
-        with balt.Progress(self.text, u'\n' + u' ' * 60) as progress:
+        with balt.Progress(self._text, u'\n' + u' ' * 60) as progress:
             progress(0.1,_(u'Updating files.'))
             self._selected_info.syncToData(missing | mismatched)
             self._selected_info.refreshBasic(SubProgress(progress, 0.1, 0.99))
@@ -1075,7 +1075,7 @@ class InstallerConverter_Apply(_InstallerLink):
         self.converter = converter
         #--Add asterisks to indicate the number of unselected archives that the BCF uses
         self.dispName = u''.join((self.converter.fullPath.sbody,u'*' * numAsterisks))
-        self.text = self.dispName
+        self._text = self.dispName
 
     @balt.conversation
     def Execute(self):
