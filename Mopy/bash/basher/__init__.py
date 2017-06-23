@@ -3558,7 +3558,7 @@ class BashStatusBar(DnDStatusBar):
         # Refresh
         self.SetStatusWidths([self.iconsSize * len(self.buttons), -1, 130])
         self.SetSize((-1, self.iconsSize))
-        self.GetParent().SendSizeEvent()
+        self.PostSizeEventToParent()
         self.OnSize()
 
     def HideButton(self,button):
@@ -3573,7 +3573,7 @@ class BashStatusBar(DnDStatusBar):
                 # Refresh
                 self.SetStatusWidths(
                     [self.iconsSize * len(self.buttons), -1, 130])
-                self.GetParent().SendSizeEvent()
+                self.PostSizeEventToParent()
                 self.OnSize()
 
     def UnhideButton(self,link):
@@ -3601,7 +3601,7 @@ class BashStatusBar(DnDStatusBar):
             self.buttons.insert(insertBefore,button)
         # Refresh
         self.SetStatusWidths([self.iconsSize * len(self.buttons), -1, 130])
-        self.GetParent().SendSizeEvent()
+        self.PostSizeEventToParent()
         self.OnSize()
 
     def GetLink(self,uid=None,index=None,button=None):
