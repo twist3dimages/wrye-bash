@@ -36,8 +36,9 @@ import platform
 import traceback
 
 import bass
+import exception
 # NO LOCAL IMPORTS HERE !
-basher = balt = barb = exceptions = None
+basher = balt = barb = None
 is_standalone = hasattr(sys, 'frozen')
 
 def _import_wx():
@@ -84,8 +85,8 @@ def _new_bash_version_prompt_backup():
 
 def cmdBackup(opts):
     # backup settings if app version has changed or on user request
-    global basher, balt, barb, exceptions
-    if not basher: import basher, balt, barb, exception
+    global basher, balt, barb
+    if not basher: import basher, balt, barb
     path = (opts.backup and opts.filename) or None
     should_quit = opts.backup and opts.quietquit
     if _new_bash_version_prompt_backup() or opts.backup:
@@ -114,8 +115,8 @@ def cmdBackup(opts):
 
 def cmdRestore(opts):
     # restore settings on user request
-    global basher, balt, barb, exceptions
-    if not basher: import basher, balt, barb, exception
+    global basher, balt, barb
+    if not basher: import basher, balt, barb
     path = (opts.restore and opts.filename) or None
     should_quit = opts.restore and opts.quietquit
     if opts.restore:
@@ -289,7 +290,6 @@ def main(opts):
     bass.language = opts.language
     import bolt # bass.language must be set
     import env # env imports bolt (this needs fixing)
-    import exception
     bolt.deprintOn = opts.debug
     wx = _import_wx()
     # useful for understanding context of bug reports

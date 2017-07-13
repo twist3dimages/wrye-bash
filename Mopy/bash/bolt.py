@@ -1561,7 +1561,7 @@ class StructFile(file):
             strLen, = self.unpack('H',2)
             strLen = strLen & 0x7f | (strLen >> 1) & 0xff80
             if strLen > 0x7FFF:
-                raise exception.UncodedError(u'String too long to convert.')
+                raise NotImplementedError(u'String too long to convert.')
         return self.read(strLen)
 
     def writeNetString(self,str):
@@ -1570,7 +1570,7 @@ class StructFile(file):
         if strLen < 128:
             self.pack('b',strLen)
         elif strLen > 0x7FFF: #--Actually probably fails earlier.
-            raise exception.UncodedError(u'String too long to convert.')
+            raise NotImplementedError(u'String too long to convert.')
         else:
             strLen =  0x80 | strLen & 0x7f | (strLen & 0xff80) << 1
             self.pack('H',strLen)

@@ -71,7 +71,7 @@ def netString(x):
     if lenx < 128:
         return struct.pack('b',lenx)+x
     elif lenx > 0x7FFF: #--Actually, probably fails earlier.
-        raise exception.UncodedError
+        raise NotImplementedError
     else:
         lenx = 0x80 | lenx & 0x7F | (lenx & 0xFF80) << 1
         return struct.pack('H',lenx)+x
