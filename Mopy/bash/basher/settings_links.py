@@ -95,18 +95,22 @@ class Settings_RestoreSettings(ItemLink):
     @balt.conversation
     def Execute(self):
         msg = _(u'Do you want to restore your Bash settings from a backup?')
-        msg += u'\n\n' + _(u'This will force a restart of Wrye Bash once your '
-                           u'settings are restored.')
+        msg += u'\n\n' + _(u'This will force a restart of Wrye Bash to restore'
+                           u' your settings.')
         if not balt.askYes(Link.Frame, msg, _(u'Restore Bash Settings?')):
             return
         backup = barb.RestoreSettings.get_backup_instance(
-            Link.Frame, settings_file=None) # prompt for backup filename
-        if not backup: return
+            Link.Frame, settings_file=None)  # prompt for backup filename
+        if not backup: return  # TODO: Throw an error
         try:
-            backup.restore_images = balt.askYes(Link.Frame,
-                _(u'Do you want to restore saved images as well as settings?'),
-                _(u'Restore Settings'))
-            with balt.BusyCursor(): backup.Apply()
+            balt.showOk(Link.Frame, _(u'Wrye Bash will restart now.'),
+                        _(u'Restarting.'))
+            Link.Frame.Restart(
+                ['--restore', '--filename', backup._settings_file.s])
+            # backup.restore_images = balt.askYes(Link.Frame,
+            #     _(u'Do you want to restore saved images as well as settings?'),
+            #     _(u'Restore Settings'))
+            # with balt.BusyCursor(): backup.Apply()
         except exception.StateError:
             deprint(u'Restore settings failed:', traceback=True)
             backup.WarnFailed()

@@ -88,10 +88,23 @@ def SetUserPath(iniPath=None, uArg=None):
             SetHomePath(bashIni.get(u'General', u'sUserPath'))
 
 # Backup/Restore --------------------------------------------------------------
-def cmdBackup(opts):
+def _backup_settings(opts):
+    """Make a backup of the Wrye Bash settings.
+
+    If no path is provided with the --filepath cmd line arg, it asks the user
+    for a file path with a dialog window.
+
+    :param opts: command line arguments.
+    :return: whether or not wrye bash should quit after backup."""
     # backup settings if app version has changed or on user request
-    global basher, balt, barb
-    if not basher: import basher, balt, barb
+    #TODO: Change arguments to only pass the relevant options.
+    #TODO: Remove the should quit return value from this function.
+    if basher is None:
+        raise NameError(u'Function called before importing basher.')
+    if balt is None:
+        raise NameError(u'Function called before importing balt.')
+    if barb is None:
+        raise NameError(u'Function called before importing barb.')
     path = (opts.backup and opts.filename) or None
     should_quit = opts.backup and opts.quietquit
     if barb.new_bash_version_prompt_backup() or opts.backup:
@@ -112,11 +125,24 @@ def cmdBackup(opts):
                 return True # Quit
     return should_quit
 
-def cmdRestore(opts):
+def _restore_settings(opts):
+    """Restore a backup of the Wrye Bash settings.
+
+    If no filename is supplied with --filename command line argument the user
+    is asked to select a file with a dialog window.
+
+    :param opts: command line arguments.
+    :return: whether or not wrye bash should quite after restoring the settings.
+    """
     # restore settings on user request
-    if not opts.restore: return False
-    global basher, balt, barb
-    if not basher: import basher, balt, barb
+    #TODO: Change arguments to only pass the relevant options.
+    #TODO: Remove the should_quit return value from this function.
+    if basher is None:
+        raise NameError(u'Function called before importing basher.')
+    if balt is None:
+        raise NameError(u'Function called before importing balt.')
+    if barb is None:
+        raise NameError(u'Function called before importing barb.')
     should_quit = opts.quietquit
     backup = barb.RestoreSettings.get_backup_instance(balt.Link.Frame,
         opts.filename or None, should_quit, opts.backup_images)
@@ -351,8 +377,9 @@ def _main(opts):
 
     # process backup/restore options
     # quit if either is true, but only after calling both
-    should_quit = cmdBackup(opts)
-    should_quit = cmdRestore(opts) or should_quit
+    should_quit = _backup_settings(opts)
+    if opts.restore:
+        should_quit = _restore_settings(opts) or should_quit
     if should_quit: return
 
     if env.isUAC:

@@ -321,11 +321,14 @@ class RestoreSettings(BaseBackupSettings):
                             + saves_dir.join(root_dir, name).s)
                     full_back_path.join(root_dir, name).copyTo(
                         saves_dir.join(root_dir, name))
-
+        msg = '\n'.join([
+            _(u'Your Bash settings have been successfully restored.'),
+            _(u'Backup Path: ') + self._settings_file.s ])
+        showInfo(self.parent, msg, _(u'Bash Settings Restored'))
         # tell the user the restore is complete and warn about restart
-        self.WarnRestart()
-        if Link.Frame: # should always exist
-            Link.Frame.Destroy()
+        # self.WarnRestart()
+        # if Link.Frame: # should always exist
+        #     Link.Frame.Destroy()
 
     @staticmethod
     def _get_backup_filename(parent, filename, do_quit):
