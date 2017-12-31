@@ -37,7 +37,7 @@ import traceback
 import bass
 import exception
 # NO OTHER LOCAL IMPORTS HERE (apart from the ones above) !
-basher = balt = barb = bolt = None
+basher = balt = barb = bolt = bush = bosh = None
 _wx = None
 is_standalone = hasattr(sys, 'frozen')
 
@@ -282,63 +282,22 @@ def _main(opts):
     bolt.deprintOn = opts.debug
     # useful for understanding context of bug reports
     if opts.debug or is_standalone:
-        # Standalone stdout is NUL no matter what.   Redirect it to stderr.
-        # Also, setup stdout/stderr to the debug log if debug mode /
-        # standalone before wxPython is up
-        # errLog = io.open(os.path.join(os.getcwdu(),u'BashBugDump.log'),'w',encoding='utf-8')
-        errLog = codecs.getwriter('utf-8')(
-            open(os.path.join(os.getcwdu(), u'BashBugDump.log'), 'w'))
-        sys.stdout = errLog
-        sys.stderr = errLog
-        old_stderr = errLog
-
+        output_device = _redirect_output()
     if opts.debug:
         dump_environment()
 
-    # ensure we are in the correct directory so relative paths will work
-    # properly
-    if is_standalone:
-        pathToProg = os.path.dirname(
-            unicode(sys.executable, bolt.Path.sys_fs_enc))
-    else:
-        pathToProg = os.path.dirname(
-            unicode(sys.argv[0], bolt.Path.sys_fs_enc))
-    if pathToProg:
-        os.chdir(pathToProg)
-    del pathToProg
+    _set_working_dir()
 
     # Check if there are other instances of Wrye Bash running
     instance = _wx.SingleInstanceChecker('Wrye Bash')
     assure_single_instance(instance)
 
+    # Read the bash.ini file and set the bashIni global in bass
+    bashIni = bass.GetBashIni()
     # Detect the game we're running for ---------------------------------------
     import bush
-    bolt.deprint (u'Searching for game to manage:')
-    # set the Bash ini global in bass
-    bashIni = bass.GetBashIni()
-    ret = bush.detect_and_set_game(opts.oblivionPath, bashIni)
-    if ret is not None: # None == success
-        if len(ret) == 0:
-            msgtext = _(
-                u"Wrye Bash could not find a game to manage. Please use "
-                u"-o command line argument to specify the game path")
-        else:
-            msgtext = _(
-                u"Wrye Bash could not determine which game to manage.  "
-                u"The following games have been detected, please select "
-                u"one to manage.")
-            msgtext += u'\n\n'
-            msgtext += _(
-                u'To prevent this message in the future, use the -o command '
-                u'line argument or the bash.ini to specify the game path')
-        retCode = _wxSelectGame(ret, msgtext)
-        if retCode is None:
-            bolt.deprint(u"No games were found or Selected. Aborting.")
-            return
-        # Add the game to the command line, so we use it if we restart
-        sys.argv += ['-o', bush.game_path(retCode).s]
-        bush.detect_and_set_game(opts.oblivionPath, bashIni, retCode)
-
+    _set_game(opts, bashIni)
+    if not bush.game: return
     # from now on bush.game is set
 
     #--Initialize Directories and some settings
@@ -354,14 +313,7 @@ def _main(opts):
 
         # if HTML file generation was requested, just do it and quit
         if opts.genHtml is not None:
-            msg1 = _(u"generating HTML file from: '%s'") % opts.genHtml
-            msg2 = _(u'done')
-            try: print msg1
-            except UnicodeError: print msg1.encode(bolt.Path.sys_fs_enc)
-            import belt # this imports bosh which imports wx (DUH)
-            bolt.WryeText.genHtml(opts.genHtml)
-            try: print msg2
-            except UnicodeError: print msg2.encode(bolt.Path.sys_fs_enc)
+            _generate_html(opts)
             return
         global basher, balt, barb
         import basher
@@ -387,8 +339,8 @@ def _main(opts):
             # Special case for py2exe version
             app = basher.BashApp()
             # Regain control of stdout/stderr from wxPython
-            sys.stdout = old_stderr
-            sys.stderr = old_stderr
+            sys.stdout = output_device
+            sys.stderr = output_device
         else:
             app = basher.BashApp(False)
     else:
@@ -402,6 +354,7 @@ def _main(opts):
     should_quit = cmdBackup(opts)
     should_quit = cmdRestore(opts) or should_quit
     if should_quit: return
+
     if env.isUAC:
         uacRestart = False
         if not opts.noUac and not opts.uac:
@@ -424,6 +377,90 @@ def _main(opts):
 
     app.Init() # Link.Frame is set here !
     app.MainLoop()
+
+def _redirect_output():
+    """Redirect stdout and stderr to debug log file.
+
+    :return: the new output device."""
+    # Standalone stdout is NUL no matter what.   Redirect it to stderr.
+    # Also, setup stdout/stderr to the debug log if debug mode /
+    # standalone before wxPython is up
+    # errLog = io.open(os.path.join(os.getcwdu(),u'BashBugDump.log'),'w',encoding='utf-8')
+    errLog = codecs.getwriter('utf-8')(
+        open(os.path.join(os.getcwdu(), u'BashBugDump.log'), 'w'))
+    sys.stdout = errLog
+    sys.stderr = errLog
+    return errLog
+
+def _set_working_dir():
+    """Set the current working directory to the Mopy folder.
+
+    This is necessary to make sure all relative paths will work as expected."""
+    if bolt is None:
+        raise NameError(u'Function called before importing bolt.')
+    if is_standalone:
+        path_to_prog = os.path.dirname(
+            unicode(sys.executable, bolt.Path.sys_fs_enc))
+    else:
+        path_to_prog = os.path.dirname(
+            unicode(sys.argv[0], bolt.Path.sys_fs_enc))
+    if path_to_prog: #FIXME: Should there be an error if path_to_prog is not set?
+        os.chdir(path_to_prog)
+
+def _set_game(opts, bash_ini):
+    """Detect, choose and set the game for this Wrye Bash session.
+
+    :param opts: command line arguments.
+    """
+    if bolt is None:
+        raise NameError(u'Function called before importing bolt.')
+    if bush is None:
+        raise NameError(u'Function called before importing bush.')
+    bolt.deprint (u'Searching for game to manage:')
+
+    ret = bush.detect_and_set_game(opts.oblivionPath, bash_ini)
+    if ret is not None: # None == success
+        if len(ret) == 0:
+            msgtext = _(
+                u"Wrye Bash could not find a game to manage. Please use "
+                u"-o command line argument to specify the game path")
+        else:
+            msgtext = _(
+                u"Wrye Bash could not determine which game to manage.  "
+                u"The following games have been detected, please select "
+                u"one to manage.")
+            msgtext += u'\n\n'
+            msgtext += _(
+                u'To prevent this message in the future, use the -o command '
+                u'line argument or the bash.ini to specify the game path')
+        retCode = _wxSelectGame(ret, msgtext)
+        if retCode is None:
+            bolt.deprint(u"No games were found or Selected. Aborting.")
+            return
+        # Add the game to the command line, so we use it if we restart
+        sys.argv += ['-o', bush.game_path(retCode).s]
+        bush.detect_and_set_game(opts.oblivionPath, bash_ini, retCode)
+    # Force Python mode if CBash can't work with this game
+    #TODO: Define constant for python-mode and cbash-mode. No magic numbers!
+    bolt.CBash = opts.mode if bush.game.esp.canCBash else 1  # 1 = python mode...
+
+def _generate_html(opts):
+    """Generate an HTML file out of the text passed in opts.genHtml.
+
+    :param opts: command line arguments."""
+    if bolt is None:
+        raise NameError(u'Function called before importing bolt.')
+    msg1 = _(u"generating HTML file from: '%s'") % opts.genHtml
+    msg2 = _(u'done')
+    try:
+        print msg1
+    except UnicodeError:
+        print msg1.encode(bolt.Path.sys_fs_enc)
+    bolt.WryeText.genHtml(opts.genHtml)
+    try:
+        print msg2
+    except UnicodeError:
+        print msg2.encode(bolt.Path.sys_fs_enc)
 
 def _show_wx_error(msg):
     """Shows an error message in a wx window."""
