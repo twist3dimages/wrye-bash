@@ -61,6 +61,7 @@ def _import_wx():
     """Import wxpython or show a tkinter error and exit if unsuccessful."""
     global _wx
     try:
+        # noinspection PyUnresolvedReferences
         import wx as _wx
     except ImportError:
         but_kwargs = {'text': _(u"QUIT"),
@@ -160,7 +161,7 @@ def assure_single_instance(instance):
     if instance.IsAnotherRunning():
         bolt.deprint(u'Only one instance of Wrye Bash can run. Exiting.')
         msg = _(u'Only one instance of Wrye Bash can run.')
-        _app = _wx.App(False)
+        _wx.App(False)
         with _wx.MessageDialog(None, msg, _(u'Wrye Bash'), _wx.OK) as dialog:
             dialog.ShowModal()
         sys.exit(1)
@@ -177,13 +178,14 @@ def exit_cleanup():
                     file_.rmtree(safety=file_.stail)
                 else:
                     file_.remove()
-            except:
+            except OSError:
                 pass
 
     if basher:
         from basher import appRestart
         from basher import uacRestart
         if appRestart:
+            exePath = None
             if not is_standalone:
                 exePath = bolt.GPath(sys.executable)
                 sys.argv = [exePath.stail] + sys.argv
@@ -307,6 +309,7 @@ def _main(opts):
     import env # env imports bolt (this needs fixing)
     bolt.deprintOn = opts.debug
     # useful for understanding context of bug reports
+    output_device = sys.stdout
     if opts.debug or is_standalone:
         output_device = _redirect_output()
     if opts.debug:
@@ -541,7 +544,7 @@ def _show_wx_error(msg):
               u'first error:'
         try:
             print traceback.format_exc(e)
-        except Exception:
+        except StandardError:
             print u'   An error occurred while displaying the second error.'
 
 def _tkinter_error_dial(msg, but_kwargs):
