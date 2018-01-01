@@ -334,8 +334,6 @@ def _main(opts):
     #  required before the rest has imported
     SetUserPath(uArg=opts.userPath)
 
-    # Force Python mode if CBash can't work with this game
-    bolt.CBash = opts.mode if bush.game.esp.canCBash else 1 #1 = python mode...
     try:
         import bosh # this imports balt (DUH) which imports wx
         env.isUAC = env.testUAC(bush.gamePath.join(u'Data'))
@@ -436,8 +434,10 @@ def _set_working_dir():
     else:
         path_to_prog = os.path.dirname(
             unicode(sys.argv[0], bolt.Path.sys_fs_enc))
-    if path_to_prog: #FIXME: Should there be an error if path_to_prog is not set?
+    if path_to_prog:
         os.chdir(path_to_prog)
+    else:
+        raise ValueError(u'Failed to set current working directory.')
 
 def _set_game(opts, bash_ini):
     """Detect, choose and set the game for this Wrye Bash session.
@@ -473,8 +473,8 @@ def _set_game(opts, bash_ini):
         sys.argv += ['-o', bush.game_path(retCode).s]
         bush.detect_and_set_game(opts.oblivionPath, bash_ini, retCode)
     # Force Python mode if CBash can't work with this game
+    bolt.CBash = opts.mode if bush.game.esp.canCBash else 1 #1 = python mode...
     #TODO: Define constant for python-mode and cbash-mode. No magic numbers!
-    bolt.CBash = opts.mode if bush.game.esp.canCBash else 1  # 1 = python mode...
 
 def _generate_html(opts):
     """Generate an HTML file out of the text passed in opts.genHtml.
