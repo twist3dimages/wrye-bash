@@ -37,7 +37,7 @@ import traceback
 import bass
 import exception
 # NO OTHER LOCAL IMPORTS HERE (apart from the ones above) !
-basher = balt = barb = bolt = bush = bosh = None
+basher = balt = barb = bolt = bush = None
 _wx = None
 is_standalone = hasattr(sys, 'frozen')
 
@@ -321,6 +321,7 @@ def _main(opts):
     # Read the bash.ini file and set the bashIni global in bass
     bashIni = bass.GetBashIni()
     # Detect the game we're running for ---------------------------------------
+    global bush
     import bush
     _set_game(opts, bashIni)
     if not bush.game: return
