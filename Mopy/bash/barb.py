@@ -94,8 +94,7 @@ def init_settings_files():
 #------------------------------------------------------------------------------
 class BaseBackupSettings(object):
 
-    def __init__(self, parent=None, settings_file=None, do_quit=False):
-        self.quit = do_quit
+    def __init__(self, parent=None, settings_file=None):
         self._settings_file = settings_file
         self.parent = parent
         self.files = {}
@@ -132,9 +131,8 @@ def SameAppVersion(): return bass.AppVersion == bass.settings['bash.version']
 
 #------------------------------------------------------------------------------
 class BackupSettings(BaseBackupSettings):
-    def __init__(self, parent=None, settings_file=None, do_quit=False,
-                 handle_images=None):
-        super(BackupSettings, self).__init__(parent, settings_file, do_quit)
+    def __init__(self, parent=None, settings_file=None, handle_images=None):
+        super(BackupSettings, self).__init__(parent, settings_file)
         game, dirs = bush.game.fsName, bass.dirs
         for (bash_dir, tmpdir), setting_files in \
                 init_settings_files().iteritems():
@@ -208,7 +206,6 @@ class BackupSettings(BaseBackupSettings):
             command = archives.compressCommand(dest7z, backup_dir, temp_dir)
             archives.compress7z(command, backup_dir, dest7z, temp_dir)
             bass.settings['bash.backupPath'] = backup_dir
-        if self.quit: return
         showInfo(self.parent, u'\n'.join([
             _(u'Your Bash settings have been backed up successfully.'),
             _(u'Backup Path: ') + self._settings_file.s]),
@@ -236,9 +233,8 @@ class BackupSettings(BaseBackupSettings):
 
 #------------------------------------------------------------------------------
 class RestoreSettings(BaseBackupSettings):
-    def __init__(self, parent=None, settings_file=None, do_quit=False,
-                 handle_images=None):
-        super(RestoreSettings, self).__init__(parent, settings_file, do_quit)
+    def __init__(self, parent=None, settings_file=None, handle_images=None):
+        super(RestoreSettings, self).__init__(parent, settings_file)
         self.restore_images = handle_images
 
     def Apply(self):
@@ -325,10 +321,6 @@ class RestoreSettings(BaseBackupSettings):
             _(u'Your Bash settings have been successfully restored.'),
             _(u'Backup Path: ') + self._settings_file.s ])
         showInfo(self.parent, msg, _(u'Bash Settings Restored'))
-        # tell the user the restore is complete and warn about restart
-        # self.WarnRestart()
-        # if Link.Frame: # should always exist
-        #     Link.Frame.Destroy()
 
     @staticmethod
     def _get_backup_filename(parent, filename, do_quit):
@@ -345,12 +337,3 @@ class RestoreSettings(BaseBackupSettings):
             _(u'There was an error while trying to restore your settings from '
               u'the backup file!'), _(u'No settings were restored.')]),
                     _(u'Unable to restore backup!'))
-
-    def WarnRestart(self):
-        if self.quit: return
-        showWarning(self.parent, '\n'.join([
-            _(u'Your Bash settings have been successfully restored.'),
-            _(u'Backup Path: ') + self._settings_file.s, u'',
-            _(u'Before the settings can take effect, Wrye Bash must restart.'),
-            _(u'Click OK to restart now.')]), _(u'Bash Settings Restored'))
-        Link.Frame.Restart()
