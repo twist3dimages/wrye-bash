@@ -101,12 +101,15 @@ class Settings_RestoreSettings(ItemLink):
             return
         backup = barb.RestoreSettings.get_backup_instance(
             Link.Frame, settings_file=None)  # prompt for backup filename
-        if not backup: return  # TODO: Throw an error
+        if not backup:
+            raise ValueError(u'Failed to initialize RestoreSettings instance.')
         try:
             balt.showOk(Link.Frame, _(u'Wrye Bash will restart now.'),
                         _(u'Restarting.'))
-            Link.Frame.Restart(
-                ['--restore', '--filename', backup._settings_file.s])
+            startup_args = ['--restore', '--filename', backup._settings_file.s]
+            if bolt.deprintOn:
+                startup_args.append('--debug')
+            Link.Frame.Restart(startup_args)
             # backup.restore_images = balt.askYes(Link.Frame,
             #     _(u'Do you want to restore saved images as well as settings?'),
             #     _(u'Restore Settings'))
