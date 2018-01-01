@@ -87,7 +87,11 @@ def parse():
     # filename #
     h = """The file to use with the -r or -b options. Must end in '.7z' and
     be a valid path and for -r exist and for -b not already exist."""
-    arg(backupGroup, '-f', '--filename', dest='filename')
+    backupGroup.add_argument('-f', '--filename',
+                             action='store',
+                             dest='filename',
+                             default=None,
+                             help=h)
     # quietquit #
     h = """Close Bash after creating or restoring backup and do not display
     any prompts or message dialogs."""

@@ -88,67 +88,67 @@ def SetUserPath(iniPath=None, uArg=None):
             SetHomePath(bashIni.get(u'General', u'sUserPath'))
 
 # Backup/Restore --------------------------------------------------------------
-def _backup_settings(opts):
+def _backup_settings(filepath, backup_images):
     """Make a backup of the Wrye Bash settings.
 
-    If no path is provided with the --filepath cmd line arg, it asks the user
-    for a file path with a dialog window.
+    If filname is None (i.e. no path was provided with the --filepath cmd
+    line arg), it asks the user for a file path with a dialog window.
 
-    :param opts: command line arguments.
-    :return: whether or not wrye bash should quit after backup."""
-    # backup settings if app version has changed or on user request
-    #TODO: Change arguments to only pass the relevant options.
-    #TODO: Remove the should quit return value from this function.
+    :param filepath: path to where the backup file should be saved. If its None
+    then the user is asked to select a filepath.
+    :type filepath: str|None
+    :param backup_images: whether or not images should be included in backup.
+    :type backup_images: bool
+    """
     if basher is None:
         raise NameError(u'Function called before importing basher.')
     if balt is None:
         raise NameError(u'Function called before importing balt.')
     if barb is None:
         raise NameError(u'Function called before importing barb.')
-    path = (opts.backup and opts.filename) or None
-    should_quit = opts.backup and opts.quietquit
-    if barb.new_bash_version_prompt_backup() or opts.backup:
-        frame = balt.Link.Frame
-        backup = barb.BackupSettings.get_backup_instance(frame, path,
-            should_quit, opts.backup_images)
-        if not backup: return
-        try:
-            backup.Apply()
-        except exception.StateError:
-            if barb.SameAppVersion():
-                backup.WarnFailed()
-            elif balt.askYes(frame, u'\n'.join([
-            _(u'There was an error while trying to backup the Bash settings!'),
-            _(u'If you continue, your current settings may be overwritten.'),
-            _(u'Do you want to quit Wrye Bash now?')]),
-                             title=_(u'Unable to create backup!')):
-                return True # Quit
-    return should_quit
+    frame = balt.Link.Frame
+    backup = barb.BackupSettings.get_backup_instance(frame, filepath, False,
+                                                     backup_images)
+    if not backup:
+        raise ValueError(u'Failed to initialise BackupSettings instance.')
+    try:
+        backup.Apply()
+    except exception.StateError as e:
+        bolt.deprint(u'There was an error while backing up Bash settings.', e)
+        msg = u'\n'.join([
+        _(u'There was an error while trying to backup the Bash settings!'),
+        _(u'If you continue, your current settings may be overwritten.'),
+        _(u'Do you want to quit Wrye Bash now?')])
+        if barb.SameAppVersion():
+            backup.WarnFailed()
+        elif balt.askYes(frame, msg, title=_(u'Unable to create backup!')):
+            exit_cleanup()
+            sys.exit(0)
 
-def _restore_settings(opts):
+def _restore_settings(filepath, backup_images):
     """Restore a backup of the Wrye Bash settings.
 
     If no filename is supplied with --filename command line argument the user
     is asked to select a file with a dialog window.
 
-    :param opts: command line arguments.
-    :return: whether or not wrye bash should quite after restoring the settings.
+    :param filepath: path to the backup file that should be restored. If its
+    None then the user is asked to select a file through a dialog.
+    :type filepath: str
+    :param backup_images: whether or not images should be restored from the
+    backup.
+    :type backup_images: bool
     """
-    # restore settings on user request
-    #TODO: Change arguments to only pass the relevant options.
-    #TODO: Remove the should_quit return value from this function.
     if basher is None:
         raise NameError(u'Function called before importing basher.')
     if balt is None:
         raise NameError(u'Function called before importing balt.')
     if barb is None:
         raise NameError(u'Function called before importing barb.')
-    should_quit = opts.quietquit
     backup = barb.RestoreSettings.get_backup_instance(balt.Link.Frame,
-        opts.filename or None, should_quit, opts.backup_images)
-    if not backup : return False
+        filepath or None, False, backup_images)
+    if not backup :
+        raise ValueError(u'Failed to initialise RestoreSettings instance.')
     backup.Apply()
-    return should_quit
 
 def assure_single_instance(instance):
     """Ascertain that only one instance of Wrye Bash is running.
@@ -376,11 +376,12 @@ def _main(opts):
         not _rightWxVersion() or not _rightPythonVersion()): return
 
     # process backup/restore options
-    # quit if either is true, but only after calling both
-    should_quit = _backup_settings(opts)
+    # backup settings if app version has changed or on user request
+    if barb.new_bash_version_prompt_backup() or opts.backup:
+        _backup_settings(opts.filename, opts.backup_images)
     if opts.restore:
-        should_quit = _restore_settings(opts) or should_quit
-    if should_quit: return
+        _restore_settings(opts.filename, opts.backup_images)
+    if opts.quietquit: return
 
     if env.isUAC:
         uacRestart = False
