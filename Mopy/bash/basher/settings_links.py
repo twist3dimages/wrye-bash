@@ -99,6 +99,10 @@ class Settings_RestoreSettings(ItemLink):
                            u' your settings.')
         if not balt.askYes(Link.Frame, msg, _(u'Restore Bash Settings?')):
             return
+        restore_images = False
+        msg = _(u'Do you want to restore any images contained in the backup?')
+        if balt.askYes(Link.Frame, msg, _(u'Restore Images?')):
+            restore_images = True
         backup = barb.RestoreSettings.get_backup_instance(
             Link.Frame, settings_file=None)  # prompt for backup filename
         if not backup:
@@ -107,13 +111,11 @@ class Settings_RestoreSettings(ItemLink):
             balt.showOk(Link.Frame, _(u'Wrye Bash will restart now.'),
                         _(u'Restarting.'))
             startup_args = ['--restore', '--filename', backup._settings_file.s]
+            if restore_images:
+                startup_args.append('--include-all-images')
             if bolt.deprintOn:
                 startup_args.append('--debug')
             Link.Frame.Restart(startup_args)
-            # backup.restore_images = balt.askYes(Link.Frame,
-            #     _(u'Do you want to restore saved images as well as settings?'),
-            #     _(u'Restore Settings'))
-            # with balt.BusyCursor(): backup.Apply()
         except exception.StateError:
             deprint(u'Restore settings failed:', traceback=True)
             backup.WarnFailed()
