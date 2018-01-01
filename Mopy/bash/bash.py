@@ -133,7 +133,7 @@ def _restore_settings(filepath, backup_images):
 
     :param filepath: path to the backup file that should be restored. If its
     None then the user is asked to select a file through a dialog.
-    :type filepath: str
+    :type filepath: str|None
     :param backup_images: whether or not images should be restored from the
     backup.
     :type backup_images: bool
