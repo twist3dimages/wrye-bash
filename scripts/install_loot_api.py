@@ -8,8 +8,8 @@ import tempfile
 import urllib
 import _winreg
 
-lootApiWrapperVersion = '3.1.0'
-lootApiWrapperRevision ='a564f23'
+lootApiWrapperVersion = '3.1.1'
+lootApiWrapperRevision ='f97de90'
 
 try:
     sys.path.append('Mopy')
