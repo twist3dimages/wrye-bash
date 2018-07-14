@@ -25,7 +25,7 @@ class FomodInfo:
     def get_fomod_info(mod_name):
         """ this method will parse the whole info.xml file """
         info = FomodInfo(mod_name=mod_name)
-        info_path = mod_name + '/fomod/info.xml'
+        info_path = os.path.join(mod_name,'fomod/info.xml')
         if os.path.exists(info_path):
             with open(info_path) as info_file:
                 # recover is True so that even 'broken' XML files get parsed
@@ -217,7 +217,7 @@ class FomodConfig:
         # we create a new config that we fill and return it at the end
         config = FomodConfig()
         # todo: detect fomod folder
-        config_path = mod_path + '/fomod/ModuleConfig.xml'
+        config_path = os.path.join(mod_path,'fomod/ModuleConfig.xml')
         if os.path.exists(config_path):
             with open(config_path) as config_file:
                 # todo: custom parser

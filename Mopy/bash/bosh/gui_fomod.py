@@ -3,6 +3,7 @@
 """a GUI Fomod Installer that uses fomods.py as a Parser"""
 from __future__ import print_function
 
+import os
 import wx
 import wx.lib.scrolledpanel
 
@@ -431,8 +432,7 @@ class FomodInstallerFrame(wx.Frame):
                                  size=wx.Size(),
                                  style=wx.DEFAULT_FRAME_STYLE ^
                                        wx.RESIZE_BORDER | wx.TAB_TRAVERSAL)
-                image_raw = wx.Image(
-                    self.mod_path + '/' + self.selected_plugin.plugin_image,
+                image_raw = wx.Image(os.path.join(self.mod_path,self.selected_plugin.plugin_image),
                     wx.BITMAP_TYPE_ANY)
                 # here is the fun part:
                 # we check if the width or the height is smaller than 800
@@ -470,13 +470,12 @@ class FomodInstallerFrame(wx.Frame):
                     self.description.SetValue(plugin.plugin_desc)
                 # todo: when a new picture is loaded the picture 'glitches'
                 if not plugin.plugin_image == '':
-                    image_raw = wx.Image(
-                        self.mod_path + '/' + plugin.plugin_image,
+                    image_raw = wx.Image(os.path.join(self.mod_path,self.selected_plugin.plugin_image),
                         wx.BITMAP_TYPE_ANY)
                     image_raw = image_raw.Scale(200, 200)
                     self.image.SetBitmap(wx.BitmapFromImage(image_raw))
                 if plugin.plugin_image == '':
-                    placeholder_png = wx.Image(TEST_FOLDER + 'placeholder.png',
+                    placeholder_png = wx.Image('../images/fomod_gui_placeholder.png',
                                                wx.BITMAP_TYPE_ANY)
                     placeholder_png = placeholder_png.Scale(200, 200)
                     self.image.SetBitmap(wx.BitmapFromImage(placeholder_png))
@@ -693,5 +692,5 @@ class FomodInstaller:
 FILES_LIST = []
 # key: the step number as String, value: the map of all groups from that step
 ALL_STEPS = {}
-FomodInstaller(mod_name='test', mod_path=TEST_FOLDER + 'test_subject06/',
+FomodInstaller(mod_name='test', mod_path=os.path.join(TEST_FOLDER,'test_subject04/'),
                testing=True, size_x=600, size_y=500)
