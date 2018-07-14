@@ -37,3 +37,6 @@ Mopy/bash/l10n/*NEW.txt
 
 # The LOOT API binaries
 Mopy/loot_api.*
+
+# some mods to test the fomod installer
+fomod-test-folder/*
