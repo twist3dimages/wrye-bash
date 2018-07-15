@@ -103,14 +103,24 @@ conditionalFileInstalls
 """
 
 def order_list(list_to_order, order):
-    """ code by https://github.com/GandaG """
+    """ code by https://github.com/GandaG
+    modified for usage within the parser """
     if order == 'Explicit':
         return list_to_order
     elif order == 'Ascending':
         reverse = False
     else:
         reverse = True
-    return sorted(list_to_order, key=str.lower, reverse=reverse)
+    if len(list_to_order) is not 0:
+        if isinstance(list_to_order[0],FomodGroup):
+            return sorted(list_to_order, key=lambda x: x.group_name,
+                          reverse=reverse)
+        elif isinstance(list_to_order[0],FomodPlugin):
+            return sorted(list_to_order, key=lambda x: x.plugin_name,
+                          reverse=reverse)
+        else:
+            return list_to_order
+
 
 class FomodFile:
     """ the class that will hold info for every file/folder """
