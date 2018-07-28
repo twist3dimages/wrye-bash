@@ -42,7 +42,6 @@ from collections import OrderedDict
 from functools import wraps, partial
 from itertools import imap
 #--Local
-from ..initialization import initDirs
 from ._mergeability import isPBashMergeable, isCBashMergeable
 from .mods_metadata import ConfigHelpers
 from .. import bass, bolt, balt, bush, env, load_order, archives
@@ -3178,9 +3177,16 @@ def initLogFile():
                     u'initialized.') % (
                   bolt.timestamp(), inisettings['KeepLog']) + u'\r\n')
 
-def initBosh(personal=empty_path, localAppData=empty_path, bashIni=None):
-    #--Bash Ini
-    initDirs(bashIni, personal, localAppData)
+def initBosh(bashIni, game_ini_path):
+    # Setup LOOT API, needs to be done after the dirs are initialized
+    global configHelpers
+    configHelpers = ConfigHelpers()
+    # game ini files
+    global oblivionIni, gameInis
+    oblivionIni = OblivionIni(game_ini_path)
+    gameInis = [oblivionIni]
+    gameInis.extend(
+        OblivionIni(dirs['saveBase'].join(x)) for x in bush.game.iniFiles[1:])
     load_order.initialize_load_order_files()
     initOptions(bashIni)
     try:
