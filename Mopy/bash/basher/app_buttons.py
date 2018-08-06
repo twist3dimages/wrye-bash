@@ -392,7 +392,7 @@ class App_Tes4View(App_Button):
         return True
 
     def Execute(self):
-        extraArgs = []
+        extraArgs = bass.inisettings['xEditCommandLineArguments'].split()
         if balt.getKeyState_Control():
             extraArgs.append(u'-FixupPGRD')
         if balt.getKeyState_Shift():
